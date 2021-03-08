@@ -1,0 +1,143 @@
+/*debug
+div{
+    border-style: solid;
+    border-color: red;
+    border-width:1px;
+    border-radius:6px;
+}*/
+
+:root{
+    font-size: 6px;
+}
+
+body{
+    background-color:#EEEEEE;
+    min-width: 120rem;
+}
+
+.container-header{
+    float: left;
+    font-size:2rem;
+    margin: 0 4rem;
+}
+
+.container-main{
+    min-width: 120rem;
+    margin: 4rem auto 0 auto;
+}
+
+.game-main{
+    width: 120rem;
+    height: 80vh;
+    margin: 0 auto;
+}
+
+.card{
+    background-color: white;
+    width:1rem;
+    height:3rem;
+    border-radius: 6px;
+    border-style: solid;
+    border-color: black;
+    border-width: 2px;
+    padding:1rem 5rem 8rem 1rem;
+    margin-right: -4rem;
+    margin-bottom: -6rem;
+    float: left;
+}
+
+.card:hover{
+    background-color: black;
+    color:white;
+}
+
+.card-selected{
+    background-color:#333333;
+    color:white;
+}
+
+.player{
+    border-style: solid;
+    border-color: #333333;
+    border-width:2px;
+    border-radius:1rem;
+    width: 45rem;
+    margin: auto;
+    text-align: center;
+}
+
+.player-waiting .player-info{
+    background-color:#CCCCCC;
+}
+
+.player-top, .player-bottom{
+    width:100%;
+    height:20rem;
+    max-height: 20vh;
+    min-height: 10vh;
+    margin: auto;
+    padding-bottom: 6rem;
+}
+
+.player-mid{
+    width:100%;
+    height: 20rem;
+    min-height: 10vh;
+    padding-bottom: 6rem;
+}
+
+.player-left,.player-right{
+    width:45%;
+    height:20rem;
+    min-width: 50rem;
+    max-height: 20vh;
+    min-height: 10vh;
+}
+
+.player-left{
+    float: left;
+}
+
+.player-right{
+    float: right;
+}
+
+.player-counter{
+    width:100%;
+    height:20rem;
+    max-height: 33vh;
+    min-height: 10vh;
+    margin: auto;
+    padding-bottom: 5rem;
+}
+
+.player-counter .player{
+    width: 120rem;
+}
+
+.player-counter .player .card:nth-child(28n+1){
+    clear: left;
+}
+
+.player-info{
+    float: left;
+    clear: left;
+    margin-top: 7rem;
+    width:100%;
+    text-align: center;
+}
+
+.btn{
+    width: 20%;
+    min-width: 14rem;
+    height: 4rem;
+}
+
+.btn-play{
+    color: green;
+}
+
+.container-options{
+    width: 40%;
+    margin:auto;
+}
