@@ -164,10 +164,10 @@ export default class CardGame extends React.Component{
         return (<div className="game-main">
         <div className="player-top"><Player cards={this.state.topCards} waitingPlayer={this.state.curPlayer % 4 == 0} key="top" playerInfo="玩家0"></Player></div>
         <div className="player-mid">
-            <div className="player-left"><Player cards={this.state.leftCards} waitingPlayer={this.state.curPlayer % 4 == 3} key="left" playerInfo="玩家1"></Player></div>
-            <div className="player-right"><Player cards={this.state.rightCards} waitingPlayer={this.state.curPlayer % 4 == 1} key="right" playerInfo="玩家2"></Player></div>
+            <div className="player-left"><Player cards={this.state.leftCards} waitingPlayer={this.state.curPlayer % 4 == 3} key="left" playerInfo="玩家3"></Player></div>
+            <div className="player-right"><Player cards={this.state.rightCards} waitingPlayer={this.state.curPlayer % 4 == 1} key="right" playerInfo="玩家1"></Player></div>
         </div>
-        <div className="player-bottom"><Player cards={this.state.bottomCards} waitingPlayer={this.state.curPlayer % 4 == 2} key="bottom" playerInfo="玩家3"></Player></div>
+        <div className="player-bottom"><Player cards={this.state.bottomCards} waitingPlayer={this.state.curPlayer % 4 == 2} key="bottom" playerInfo="玩家2"></Player></div>
         <br />
         <div className="player-counter"><Player cards={this.state.remainCards} key="remain" playerInfo="记牌" selectedCards={this.state.selectedCards} onCardClick={this.handleCardClick}></Player></div>
         <div className="container-options">
