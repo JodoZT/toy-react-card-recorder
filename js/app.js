@@ -63,9 +63,8 @@ class OptionNumberItem extends React.Component {
         <td class="option-info">{this.props.optionName}：</td>
         <td align="center">{this.props.optionAmount}</td>
         <td align="right">
-        <span className="btn-base" onClick={this.handleUpClick}><span>▲增加</span></span>
-        <span>  </span>
-        <span className="btn-base" onClick={this.handleDownClick}><span>▼减少</span></span>
+        <span className="btn-base" onClick={this.handleUpClick}><span>▲</span></span>
+        <span className="btn-base" onClick={this.handleDownClick}><span>▼</span></span>
         </td>
         </tr>);
     }
