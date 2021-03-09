@@ -7,11 +7,12 @@ div{
 }*/
 
 :root{
+    height:100vh;
     font-size: 6px;
 }
 
 body{
-    background-color:#EEEEEE;
+    background-image: linear-gradient(to right bottom,white,#BBBBBB);
     min-width: 120rem;
 }
 
@@ -28,7 +29,6 @@ body{
 
 .game-main{
     width: 120rem;
-    height: 80vh;
     margin: 0 auto;
 }
 
@@ -44,16 +44,21 @@ body{
     margin-right: -4rem;
     margin-bottom: -6rem;
     float: left;
-}
-
-.card:hover{
-    background-color: black;
-    color:white;
+    user-select: none;
 }
 
 .card-selected{
-    background-color:#333333;
+    background-color:#444444;
     color:white;
+}
+
+.card:hover{
+    background-color: #333333;
+    color:white;
+}
+
+.card:active{
+    background-color:black;
 }
 
 .player{
@@ -67,7 +72,8 @@ body{
 }
 
 .player-waiting .player-info{
-    background-color:#CCCCCC;
+    background-color:#333333;
+    color:white;
 }
 
 .player-top, .player-bottom{
@@ -76,14 +82,14 @@ body{
     max-height: 20vh;
     min-height: 10vh;
     margin: auto;
-    padding-bottom: 6rem;
+    padding-bottom: 4rem;
 }
 
 .player-mid{
     width:100%;
     height: 20rem;
     min-height: 10vh;
-    padding-bottom: 6rem;
+    padding-bottom: 4rem;
 }
 
 .player-left,.player-right{
@@ -137,7 +143,85 @@ body{
     color: green;
 }
 
-.container-options{
+.container-btn-options{
     width: 40%;
     margin:auto;
+}
+
+.invisible{
+    display: none;
+}
+
+.container-options{
+    position:absolute;
+    top: 0;
+    left: 0;
+    width:100%;
+    height:100%;
+    background-color:#295871e6;
+}
+
+.panel-options{
+    background-color:white;
+    position:absolute;
+    left:0;
+    right:0;
+    top:0;
+    bottom:0;
+    width: 60rem;
+    height:40rem;
+    margin: auto;
+    border-width: 0.5rem;
+    border-style: solid;
+    border-radius:2rem;
+    padding:10rem;
+}
+
+.to-top-right{
+    position: absolute;
+    right: 2rem;
+    top:2rem;
+}
+
+.btn-base{
+    width:4rem;
+    height:2rem;
+    transition:all 0.3s;
+    cursor: pointer;
+    user-select: none;
+}
+
+.btn-base:hover{
+    transform: scale(1.2);
+}
+.btn-base:active{
+    transform: scale(1.1);
+}
+
+.to-mid{
+    position:absolute;
+    left: 0;
+    right: 0;
+    margin:auto;
+}
+
+.icon-close{
+    width:3rem;
+    height:2px;
+    border-style: solid;
+    border-color: black;
+    border-radius:3px;
+    border-width: 2px;
+}
+
+.option-item{
+    font-size: 3rem;
+}
+
+.option-info{
+    padding: 1px;
+}
+
+table{
+    width: 100%;
 }

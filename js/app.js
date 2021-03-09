@@ -1,7 +1,6 @@
 import React from "react"
 
 const CARDSET = ["3","3","4","4","5","5","6","6","7","7","8","8","9","9","10","10","J","J","Q","Q","K","K","A","A","2","2","小王","大王"];
-var cardSetCnt = 2;
 
 class Card extends React.Component{
     constructor(props){
@@ -38,10 +37,37 @@ class Player extends React.Component{
         }
         let cardsDoms = []
         for(let card of this.props.cards){
-            cardsDoms.push(<Card selectedCards={this.props.selectedCards} cardtype={CARDSET[Math.floor(card / cardSetCnt)]} cardid={card} key={card} onCardClick={this.props.onCardClick}></Card>);
+            cardsDoms.push(<Card selectedCards={this.props.selectedCards} cardtype={CARDSET[Math.floor(card / this.props.cardsSetCnt)]} cardid={card} key={card} onCardClick={this.props.onCardClick} cardsSetCnt={this.props.cardsSetCnt}></Card>);
         }
         
         return <div className={className}>{cardsDoms}<div className="player-info">{this.props.playerInfo}</div></div>;
+    }
+}
+
+class OptionNumberItem extends React.Component {
+    constructor(props){
+        super(props);
+        this.state = {}
+    }
+
+    handleUpClick = ()=>{
+        this.props.onModifyAmount(this.props.optionAmount + 1);
+    }
+
+    handleDownClick = ()=>{
+        this.props.onModifyAmount(this.props.optionAmount - 1);
+    }
+
+    render() {
+        return (<tr class="option-item">
+        <td class="option-info">{this.props.optionName}：</td>
+        <td align="center">{this.props.optionAmount}</td>
+        <td align="right">
+        <span className="btn-base" onClick={this.handleUpClick}><span>▲增加</span></span>
+        <span>  </span>
+        <span className="btn-base" onClick={this.handleDownClick}><span>▼减少</span></span>
+        </td>
+        </tr>);
     }
 }
 
@@ -53,6 +79,7 @@ export default class CardGame extends React.Component{
         }
         this.state = this.getInitState();
         this.usedStates = [];
+        this.optionsVisible = false;
     }
 
     getInitState = ()=>{
@@ -92,9 +119,8 @@ export default class CardGame extends React.Component{
         }
     }
 
-    changeCardSetCnt=(cnt)=>{
+    changeCardsSetCnt = (cnt)=>{
         this.setState({cardsSetCnt: cnt});
-        cardSetCnt = cnt;
     }
 
     handleCardClick = (cardid)=>{
@@ -153,6 +179,11 @@ export default class CardGame extends React.Component{
         });
     }
 
+    toggleOptionsContainer = (visible) => {
+        this.optionsVisible = visible;
+        this.setState({});
+    }
+
     clearSelected = ()=>{
         this.setState(()=>{
             this.state.selectedCards = new Set();
@@ -160,22 +191,45 @@ export default class CardGame extends React.Component{
         });
     }
 
+    handleCardsSetCntModify = (cnt)=>{
+        cnt = cnt < 1 ? 1 : cnt > 4 ? 4 : cnt;
+        if(cnt == this.state.cardsSetCnt){
+            return
+        }
+        this.setState(()=>({
+            cardsSetCnt: cnt
+        }))
+    }
+
     render(){
+        let containerOptionsClassName="container-options";
+        if(!this.optionsVisible){
+            containerOptionsClassName += " invisible";
+        }
         return (<div className="game-main">
-        <div className="player-top"><Player cards={this.state.topCards} waitingPlayer={this.state.curPlayer % 4 == 0} key="top" playerInfo="玩家0"></Player></div>
+        <div className="player-top"><Player cards={this.state.topCards} waitingPlayer={this.state.curPlayer % 4 == 0} key="top" playerInfo="玩家0" cardsSetCnt={this.state.cardsSetCnt}></Player></div>
         <div className="player-mid">
-            <div className="player-left"><Player cards={this.state.leftCards} waitingPlayer={this.state.curPlayer % 4 == 3} key="left" playerInfo="玩家3"></Player></div>
-            <div className="player-right"><Player cards={this.state.rightCards} waitingPlayer={this.state.curPlayer % 4 == 1} key="right" playerInfo="玩家1"></Player></div>
+            <div className="player-left"><Player cards={this.state.leftCards} waitingPlayer={this.state.curPlayer % 4 == 3} key="left" playerInfo="玩家3" cardsSetCnt={this.state.cardsSetCnt}></Player></div>
+            <div className="player-right"><Player cards={this.state.rightCards} waitingPlayer={this.state.curPlayer % 4 == 1} key="right" playerInfo="玩家1" cardsSetCnt={this.state.cardsSetCnt}></Player></div>
         </div>
-        <div className="player-bottom"><Player cards={this.state.bottomCards} waitingPlayer={this.state.curPlayer % 4 == 2} key="bottom" playerInfo="玩家2"></Player></div>
+        <div className="player-bottom"><Player cards={this.state.bottomCards} waitingPlayer={this.state.curPlayer % 4 == 2} key="bottom" playerInfo="玩家2" cardsSetCnt={this.state.cardsSetCnt}></Player></div>
         <br />
-        <div className="player-counter"><Player cards={this.state.remainCards} key="remain" playerInfo="记牌" selectedCards={this.state.selectedCards} onCardClick={this.handleCardClick}></Player></div>
-        <div className="container-options">
+        <div className="player-counter"><Player cards={this.state.remainCards} key="remain" playerInfo="记牌" selectedCards={this.state.selectedCards} onCardClick={this.handleCardClick} cardsSetCnt={this.state.cardsSetCnt}></Player></div>
+        <div className="container-btn-options">
+        <button className="btn" onClick={()=>this.toggleOptionsContainer(true)}>选项</button>
         <button className="btn" onClick={this.resetState}>重新开始</button>
         <button className="btn" onClick={this.recoverState}>撤销</button>
         <button className="btn" onClick={this.skipPlayer}>跳过</button>
         <button className="btn" onClick={this.clearSelected}>取消选取</button>
         <button className="btn btn-play" onClick={this.toNextPlayer}>出牌</button>
+        </div>
+        <div className={containerOptionsClassName}>
+            <div className="panel-options">
+                <span className="btn-base to-top-right" onClick={()=>this.toggleOptionsContainer(false)}><p className="icon-close to-mid"></p></span>
+                <table><tbody>
+                <OptionNumberItem optionName="牌组数量" optionAmount={this.state.cardsSetCnt} onModifyAmount={this.handleCardsSetCntModify}></OptionNumberItem>
+                </tbody></table>
+            </div>
         </div>
         </div>);
     }
