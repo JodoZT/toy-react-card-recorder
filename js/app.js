@@ -79,6 +79,11 @@ export default class CardGame extends React.Component{
         this.state = this.getInitState();
         this.usedStates = [];
         this.optionsVisible = false;
+        this.mouseDown = false;
+        this.cardStart = -1;
+        this.cardEnd = -1
+        this.refreshTimeout = undefined;
+        this.patt = /^([2-9JQKA]|10)[ ,\-]?([2-9JQKA]|10)[ ,\-]?([1-8])?$/i;
     }
 
     getInitState = ()=>{
@@ -122,14 +127,18 @@ export default class CardGame extends React.Component{
         this.setState({cardsSetCnt: cnt});
     }
 
-    handleCardClick = (cardid)=>{
-        if(!this.state.selectedCards.has(cardid)){
-           this.setState(()=>({selectedCards:this.state.selectedCards.add(cardid)}));
-        }else{
-            this.setState(()=>{
-                this.state.selectedCards.delete(cardid);
+    handleCardMouseEvent = (cardid, eventId = 0)=>{
+        switch(eventId){
+            case 0:
+                if(!this.state.selectedCards.has(cardid)){
+                this.setState(()=>({selectedCards:this.state.selectedCards.add(cardid)}));
+                }else{
+                this.setState(()=>{
+                    this.state.selectedCards.delete(cardid);
                 return {selectedCards:this.state.selectedCards};
-            });
+                });
+                }
+                break;
         }
     }
 
@@ -200,6 +209,49 @@ export default class CardGame extends React.Component{
         }))
     }
 
+    handleQuickPlay = (e)=>{
+        clearTimeout(this.refreshTimeout);
+        if(e.key == "Enter"){
+            this.toNextPlayer();
+            e.nativeEvent.srcElement.value = "";
+            return;
+        }
+        this.refreshTimeout = setTimeout(()=>{
+            let val = e.nativeEvent.srcElement.value;
+            let res = val.match(this.patt);
+            if(res != null){
+                let [start, end, cnt] = [res[1].toUpperCase(), res[2].toUpperCase(), res[3]];
+                if(cnt == undefined){
+                    cnt = 1;
+                }
+                start = Math.floor(CARDSET.indexOf(start) / 2);
+                end = Math.floor(CARDSET.indexOf(end) / 2);
+                if(start > end){
+                    [start, end] = [end, start];
+                }
+                let selected = new Set();
+                let cur = 0;
+                for(;start <= end; start ++){
+                    cur = 0
+                    for(let i = 0; i < this.state.cardsSetCnt * 2; i++){
+                        if(this.state.remainCards.has(this.state.cardsSetCnt * 2 * start + i)){
+                            selected.add(this.state.cardsSetCnt * 2 * start + i);
+                            cur += 1;
+                            if(cur == cnt)break;
+                        }
+                    }
+                    if(cur < cnt){
+                        //alert("剩余牌组不足以选取: " + CARDSET[start * 2]);
+                        return;
+                    }
+                }
+                this.setState(()=>{
+                    return {selectedCards: selected};
+                })
+            }
+        }, 200);
+    }
+
     render(){
         let containerOptionsClassName="container-options";
         if(!this.optionsVisible){
@@ -213,15 +265,17 @@ export default class CardGame extends React.Component{
         </div>
         <div className="player-bottom"><Player cards={this.state.bottomCards} waitingPlayer={this.state.curPlayer % 4 == 2} key="bottom" playerInfo="玩家2" cardsSetCnt={this.state.cardsSetCnt}></Player></div>
         <br />
-        <div className="player-counter"><Player cards={this.state.remainCards} key="remain" playerInfo="记牌" selectedCards={this.state.selectedCards} onCardClick={this.handleCardClick} cardsSetCnt={this.state.cardsSetCnt}></Player></div>
+        <div className="player-counter"><Player cards={this.state.remainCards} key="remain" playerInfo="记牌" selectedCards={this.state.selectedCards} onCardClick={this.handleCardMouseEvent} cardsSetCnt={this.state.cardsSetCnt}></Player></div>
+        <div className="panel-quick-play">
+            <label for="quick-play">快速选牌: </label><input type="text" id="quick-play" name="quick-play" onKeyUp={(e)=>this.handleQuickPlay(e)} placeholder="开始牌型 结束牌型 [数量]"></input>
+        </div>
+        <br></br>
         <div className="container-btn-options">
-        <span className="span-btn">
-        <button className="btn" onClick={()=>this.toggleOptionsContainer(true)}>选项</button>
+        <span className="span-btn"><button className="btn" onClick={()=>this.toggleOptionsContainer(true)}>选项</button>
         <button className="btn" onClick={this.resetState}>重新开始</button>
         <button className="btn" onClick={this.recoverState}>撤销</button>
         <button className="btn" onClick={this.clearSelected}>取消选取</button></span>
         <div className="btn-play" onClick={this.toNextPlayer}>出牌</div>
-        
         </div>
         <div className={containerOptionsClassName}>
             <div className="panel-options">
