@@ -215,12 +215,13 @@ export default class CardGame extends React.Component{
         <br />
         <div className="player-counter"><Player cards={this.state.remainCards} key="remain" playerInfo="记牌" selectedCards={this.state.selectedCards} onCardClick={this.handleCardClick} cardsSetCnt={this.state.cardsSetCnt}></Player></div>
         <div className="container-btn-options">
+        <span className="span-btn">
         <button className="btn" onClick={()=>this.toggleOptionsContainer(true)}>选项</button>
         <button className="btn" onClick={this.resetState}>重新开始</button>
         <button className="btn" onClick={this.recoverState}>撤销</button>
-        <button className="btn" onClick={this.skipPlayer}>跳过</button>
-        <button className="btn" onClick={this.clearSelected}>取消选取</button>
-        <button className="btn btn-play" onClick={this.toNextPlayer}>出牌</button>
+        <button className="btn" onClick={this.clearSelected}>取消选取</button></span>
+        <div className="btn-play" onClick={this.toNextPlayer}>出牌</div>
+        
         </div>
         <div className={containerOptionsClassName}>
             <div className="panel-options">
