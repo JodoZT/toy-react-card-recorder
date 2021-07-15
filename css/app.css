@@ -58,6 +58,7 @@ body{
 
 .card:active{
     background-color:black;
+    color:white;
 }
 
 .player{
@@ -168,7 +169,50 @@ body{
 }
 
 .invisible{
-    display: none;
+    display: none !important;
+}
+
+.container-loading-box{
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(255, 255, 255, 0.904);
+}
+
+.icon-loading{
+    flex:none;
+    background-image: url(/static/loading.svg);
+    background-size: 6rem 6rem;
+    width: 6rem;
+    height: 6rem;
+}
+
+@keyframes spin{
+    0%{
+        transform: rotate(0deg);
+    }
+    25%{
+        transform: rotate(180deg);
+    }
+    50%{
+        transform: rotate(360deg);
+    }
+    75%{
+        transform: rotate(540deg);
+    }
+    100%{
+        transform: rotate(720deg);
+    }
+}
+
+.icon-spin{
+    animation: spin 1.5s infinite linear;
 }
 
 .container-options{
@@ -187,7 +231,7 @@ body{
 }
 
 .panel-options{
-    background-color:white;
+    background-color:rgb(255, 255, 255);
     position:absolute;
     left:0;
     right:0;
