@@ -1,30 +1,44 @@
-import React from "react"
+import * as React from "react"
 
 const CARDSET = ["3","3","4","4","5","5","6","6","7","7","8","8","9","9","10","10","J","J","Q","Q","K","K","A","A","2","2","小王","大王"];
 
-class Card extends React.Component{
+interface CardProps{
+    selectedCards:Set<number>;
+    cardid:number;
+    cardtype:string;
+    cardsSetCnt:number;
+}
+
+class Card extends React.Component<CardProps, {}, {}>{
     render(){
         let className = "card";
         if(this.props.selectedCards && this.props.selectedCards.has(this.props.cardid)){
             className += " card-selected";
         }
-        return <div className={className} cardid={this.props.cardid}>{this.props.cardtype}</div>
+        return <div className={className} data-cardid={this.props.cardid}>{this.props.cardtype}</div>
     }
 }
 
-class Player extends React.Component{
-    state = {}
+interface PlayerProps{
+    waitingPlayer?:boolean;
+    cards:Set<number>;
+    selectedCards?:Set<number>;
+    mouseHandler?:React.MouseEventHandler;
+    cardsSetCnt:number;
+    playerInfo:string;
+}
 
+class Player extends React.Component<PlayerProps, {}, {}>{
     render(){
         let className = "player";
         if(this.props.waitingPlayer){
             className += " player-waiting";
         }
-        if(this.props.cards.length == 0){
+        if(this.props.cards.size == 0){
             return <div className={className}>暂无出牌<div className="player-info">{this.props.playerInfo}</div></div>;
         }
         let cardsDoms = []
-        for(let card of this.props.cards){
+        for(let card of Array.from(this.props.cards).sort((a,b)=>a-b)){
             cardsDoms.push(<Card selectedCards={this.props.selectedCards} cardtype={CARDSET[Math.floor(card / this.props.cardsSetCnt)]} cardid={card} key={card} cardsSetCnt={this.props.cardsSetCnt}></Card>);
         }
         
@@ -32,12 +46,13 @@ class Player extends React.Component{
     }
 }
 
-class OptionNumberItem extends React.Component {
-    constructor(props){
-        super(props);
-        this.state = {}
-    }
+interface OptionNumberItemProps{
+    onModifyAmount:Function;
+    optionAmount:number;
+    optionName:string;
+}
 
+class OptionNumberItem extends React.Component<OptionNumberItemProps, {}, {}> {
     handleUpClick = ()=>{
         this.props.onModifyAmount(this.props.optionAmount + 1);
     }
@@ -47,8 +62,8 @@ class OptionNumberItem extends React.Component {
     }
 
     render() {
-        return (<tr class="option-item">
-        <td class="option-info">{this.props.optionName}：</td>
+        return (<tr className="option-item">
+        <td className="option-info">{this.props.optionName}：</td>
         <td align="center">{this.props.optionAmount}</td>
         <td align="right">
         <span className="btn-base" onClick={this.handleUpClick}><span>▲</span></span>
@@ -58,24 +73,37 @@ class OptionNumberItem extends React.Component {
     }
 }
 
-export default class CardGame extends React.Component{
+interface CardGameState{
+    cardsSetCnt: number;
+    curPlayer: number;
+    remainCards: Set<number>;
+    leftCards:Set<number>;
+    topCards:Set<number>;
+    rightCards:Set<number>;
+    bottomCards:Set<number>;
+    selectedCards:Set<number>;
+    savedSelectedCards:Set<number>;
+}
+
+export default class CardGame extends React.Component<{}, CardGameState, {}>{
+    usedStates : CardGameState[];
+    optionsVisible : boolean;
+    cardStart : number;
+    refreshTimeout : NodeJS.Timeout;
+    patt : RegExp;
+
     constructor(props){
         super(props)
-        this.state = {
-            cardsSetCnt: 2
-        }
-        this.state = this.getInitState();
+        this.state = this.getInitState(2);
         this.usedStates = [];
         this.optionsVisible = false;
         this.cardStart = undefined;
         this.refreshTimeout = undefined;
-        this.mouseDownCard = undefined;
         this.patt = /^([2-9JQKA]|10)[ ,\-]?([2-9JQKA]|10)[ ,\-]?([1-8])?$/i;
     }
 
-    getInitState = ()=>{
-        var remain = new Set();
-        let cnt = this.state.cardsSetCnt
+    getInitState = (cnt:number=2)=>{
+        var remain = new Set<number>();
         let cur = 0
         for(let i = 0;i < cnt; i++){
             for(let j of CARDSET.keys()){
@@ -87,11 +115,11 @@ export default class CardGame extends React.Component{
             cardsSetCnt: cnt,
             curPlayer: 0,
             remainCards: remain,
-            leftCards:[],
-            topCards:[],
-            rightCards:[],
-            bottomCards:[],
-            selectedCards:new Set(),
+            leftCards:new Set<number>(),
+            topCards:new Set<number>(),
+            rightCards:new Set<number>(),
+            bottomCards:new Set<number>(),
+            selectedCards:new Set<number>(),
             savedSelectedCards:undefined
         };
     };
@@ -104,7 +132,7 @@ export default class CardGame extends React.Component{
         if(this.usedStates.length > 0){
             this.usedStates = [this.usedStates[this.usedStates.length - 1]];
         }
-        this.setState(this.getInitState());
+        this.setState(this.getInitState(this.state.cardsSetCnt));
     }
 
     recoverState = ()=>{
@@ -132,12 +160,12 @@ export default class CardGame extends React.Component{
         switch(e.type){
             case "mousedown":
                 if(target.classList.contains("card")){
-                    let cardid = parseInt(target.getAttribute("cardid"))
+                    let cardid = parseInt(target.getAttribute("data-cardid"))
                     if(cardid != NaN){
                         this.cardStart = cardid;
-                        this.state.savedSelectedCards = new Set(Array.from(this.state.selectedCards));
+                        let savedSelectedCards = new Set<number>(Array.from(this.state.selectedCards));
                         this.changeCardSelect(cardid);
-                        this.setState({selectedCards:this.state.selectedCards});
+                        this.setState({selectedCards:this.state.selectedCards, savedSelectedCards: savedSelectedCards});
                     }else{
                         this.cardStart = undefined;
                     }
@@ -146,22 +174,22 @@ export default class CardGame extends React.Component{
             case "mouseover":
                 if(this.cardStart != undefined){
                     if(target.classList.contains("card")){
-                        let cardid = parseInt(target.getAttribute("cardid"))
+                        let cardid = parseInt(target.getAttribute("data-cardid"))
                         if(cardid != NaN){
                             let cardEnd = cardid, cardStart = this.cardStart;
                             if(cardEnd < cardStart){
                                 cardEnd = cardStart;
                                 cardStart = cardid;
                             }
-                            this.state.selectedCards = new Set(Array.from(this.state.savedSelectedCards))
+                            let selectedCards = new Set<number>(Array.from(this.state.savedSelectedCards))
                             for(let i = cardStart; i <= cardEnd; i++){
-                                if(this.state.selectedCards.has(i)){
-                                    this.state.selectedCards.delete(i);
+                                if(selectedCards.has(i)){
+                                    selectedCards.delete(i);
                                 }else if(this.state.remainCards.has(i)){
-                                    this.state.selectedCards.add(i);
+                                    selectedCards.add(i);
                                 }
                             }
-                            this.setState({selectedCards:this.state.selectedCards})
+                            this.setState({selectedCards:selectedCards})
                         }else{
                             this.cardStart = undefined;
                         }
@@ -172,7 +200,7 @@ export default class CardGame extends React.Component{
                 if(this.cardStart != undefined){
                     if(target.classList.contains("card")){
                         this.cardStart = undefined;
-                        this.savedSelectedCards = undefined;
+                        this.setState({savedSelectedCards : undefined})
                     }
                 }
                 break;
@@ -180,7 +208,7 @@ export default class CardGame extends React.Component{
                 if(this.cardStart != undefined){
                     if(target.classList.contains("player")){
                         this.cardStart = undefined;
-                        this.setState({selectedCards:this.state.savedSelectedCards || new Set(), savedSelectedCards: undefined})
+                        this.setState({selectedCards:this.state.savedSelectedCards || new Set<number>(), savedSelectedCards: undefined})
                     }
                 }
                 break;
@@ -190,22 +218,8 @@ export default class CardGame extends React.Component{
         e.stopPropagation();
     }
 
-    handleCardMouseDown = (e) => {
-        var target = e.target || e.srcElement;
-        if(target.classList.contains("card")){
-            let cardid = parseInt(target.getAttribute("cardid"))
-            if(cardid != NaN){
-                this.cardStart = cardid;
-            }
-        }
-    }
-
-    handleCardMouseUp = (e) => {
-
-    }
-
     skipPlayer = ()=>{
-        this.state.selectedCards = new Set();
+        this.setState({selectedCards:new Set<number>()});
         this.toNextPlayer();
     }
 
@@ -217,10 +231,10 @@ export default class CardGame extends React.Component{
             }else if(Array.isArray(this.state[key])){
                 copyState[key] = [...this.state[key],];
             }else if(this.state[key] instanceof Set){
-                copyState[key] = new Set([...this.state[key]]);
+                copyState[key] = new Set<number>([...this.state[key]]);
             }
         }
-        this.usedStates.push(copyState);
+        this.usedStates.push(copyState as CardGameState);
 
         var curCards = this.state.topCards
         switch(this.state.curPlayer){
@@ -236,10 +250,9 @@ export default class CardGame extends React.Component{
         }
 
         for(let cardid of this.state.selectedCards){
-            curCards.push(cardid);
+            curCards.add(cardid);
             this.state.remainCards.delete(cardid);
         }
-        curCards.sort((a,b)=>(a-b));
 
         this.setState(()=>{
             return {
@@ -256,7 +269,7 @@ export default class CardGame extends React.Component{
 
     clearSelected = ()=>{
         this.setState(()=>{
-            this.state.selectedCards = new Set();
+            this.setState({selectedCards: new Set<number>()})
             return {selectedCards:this.state.selectedCards};
         });
     }
@@ -308,7 +321,7 @@ export default class CardGame extends React.Component{
                     }
                 }
                 this.setState(()=>{
-                    return {selectedCards: selected};
+                    return {selectedCards: selected} as CardGameState;
                 })
             }
         }, 200);
@@ -329,7 +342,7 @@ export default class CardGame extends React.Component{
         <br />
         <div className="player-counter"><Player cards={this.state.remainCards} key="remain" playerInfo="记牌" selectedCards={this.state.selectedCards} mouseHandler={this.handleCardMouseEvent} cardsSetCnt={this.state.cardsSetCnt}></Player></div>
         <div className="panel-quick-play">
-            <label for="quick-play">快速选牌: </label><input type="text" id="quick-play" name="quick-play" onKeyUp={(e)=>this.handleQuickPlay(e)} placeholder="开始牌型 结束牌型 [数量]"></input>
+            <label htmlFor="quick-play">快速选牌: </label><input type="text" id="quick-play" name="quick-play" onKeyUp={(e)=>this.handleQuickPlay(e)} placeholder="开始牌型 结束牌型 [数量]"></input>
         </div>
         <br></br>
         <div className="container-btn-options">

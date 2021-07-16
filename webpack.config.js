@@ -1,7 +1,7 @@
 const path = require("path");
 
 module.exports = {
-    entry: './js/index.js',
+    entry: './js/index.tsx',
     output: {
         path: path.resolve(__dirname, 'dist/js'),
         filename: 'indexbundle.js'
@@ -9,8 +9,13 @@ module.exports = {
     module:{
         rules:[
             {
-                test: /\.js$/,
+                test: /\.tsx$/,
                 use: 'babel-loader'
+            },
+            {
+                test: /\.js$/,
+                use: 'source-map-loader',
+                enforce: "pre"
             }
         ]
     },
@@ -21,5 +26,8 @@ module.exports = {
     externals: {
         "react": "React",
         "react-dom": "ReactDOM"
-    }
+    },
+    resolve: {
+        extensions: [".js", "jsx", ".json", ".ts", ".tsx"],
+    },
 };
