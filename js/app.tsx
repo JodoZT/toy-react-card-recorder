@@ -53,11 +53,11 @@ interface OptionNumberItemProps{
 }
 
 class OptionNumberItem extends React.Component<OptionNumberItemProps, {}, {}> {
-    handleUpClick = ()=>{
+    handleUpClick = () : void =>{
         this.props.onModifyAmount(this.props.optionAmount + 1);
     }
 
-    handleDownClick = ()=>{
+    handleDownClick = () : void =>{
         this.props.onModifyAmount(this.props.optionAmount - 1);
     }
 
@@ -92,7 +92,7 @@ export default class CardGame extends React.Component<{}, CardGameState, {}>{
     refreshTimeout : NodeJS.Timeout;
     patt : RegExp;
 
-    constructor(props){
+    constructor(props:any){
         super(props)
         this.state = this.getInitState(2);
         this.usedStates = [];
@@ -102,7 +102,7 @@ export default class CardGame extends React.Component<{}, CardGameState, {}>{
         this.patt = /^([2-9JQKA]|10)[ ,\-]?([2-9JQKA]|10)[ ,\-]?([1-8])?$/i;
     }
 
-    getInitState = (cnt:number=2)=>{
+    getInitState = (cnt:number = 2):CardGameState=>{
         var remain = new Set<number>();
         let cur = 0
         for(let i = 0;i < cnt; i++){
@@ -143,11 +143,11 @@ export default class CardGame extends React.Component<{}, CardGameState, {}>{
         }
     }
 
-    changeCardsSetCnt = (cnt)=>{
+    changeCardsSetCnt = (cnt:number)=>{
         this.setState({cardsSetCnt: cnt});
     }
 
-    changeCardSelect = (cardid) => {
+    changeCardSelect = (cardid:number) => {
         if(this.state.selectedCards.has(cardid)){
             this.state.selectedCards.delete(cardid);
         }else if(this.state.remainCards.has(cardid)){
@@ -155,8 +155,8 @@ export default class CardGame extends React.Component<{}, CardGameState, {}>{
         }
     }
 
-    handleCardMouseEvent = (e) => {
-        var target = e.target || e.srcElement;
+    handleCardMouseEvent = (e:React.MouseEvent) => {
+        var target = e.target as HTMLElement;
         switch(e.type){
             case "mousedown":
                 if(target.classList.contains("card")){
@@ -224,15 +224,16 @@ export default class CardGame extends React.Component<{}, CardGameState, {}>{
     }
 
     toNextPlayer = ()=>{
-        let copyState = {}
-        for(let key in this.state){
-            if(typeof(this.state[key]) == "number"){
-                copyState[key] = this.state[key];
-            }else if(Array.isArray(this.state[key])){
-                copyState[key] = [...this.state[key],];
-            }else if(this.state[key] instanceof Set){
-                copyState[key] = new Set<number>([...this.state[key]]);
-            }
+        let copyState:CardGameState = {
+            cardsSetCnt: this.state.cardsSetCnt,
+            curPlayer: this.state.curPlayer,
+            remainCards: new Set(Array.from(this.state.remainCards)),
+            leftCards: new Set(Array.from(this.state.leftCards)),
+            rightCards: new Set(Array.from(this.state.rightCards)),
+            topCards: new Set(Array.from(this.state.topCards)),
+            bottomCards: new Set(Array.from(this.state.bottomCards)),
+            selectedCards: new Set(Array.from(this.state.selectedCards)),
+            savedSelectedCards: new Set()
         }
         this.usedStates.push(copyState as CardGameState);
 
@@ -262,19 +263,18 @@ export default class CardGame extends React.Component<{}, CardGameState, {}>{
         });
     }
 
-    toggleOptionsContainer = (visible) => {
+    toggleOptionsContainer = (visible:boolean):void => {
         this.optionsVisible = visible;
         this.setState({});
     }
 
-    clearSelected = ()=>{
+    clearSelected = ():void=>{
         this.setState(()=>{
             this.setState({selectedCards: new Set<number>()})
-            return {selectedCards:this.state.selectedCards};
         });
     }
 
-    handleCardsSetCntModify = (cnt)=>{
+    handleCardsSetCntModify = (cnt:number):void=>{
         cnt = cnt < 1 ? 1 : cnt > 4 ? 4 : cnt;
         if(cnt == this.state.cardsSetCnt){
             return
@@ -284,39 +284,39 @@ export default class CardGame extends React.Component<{}, CardGameState, {}>{
         }))
     }
 
-    handleQuickPlay = (e)=>{
+    handleQuickPlay = (e:React.KeyboardEvent)=>{
         clearTimeout(this.refreshTimeout);
         if(e.key == "Enter"){
             this.toNextPlayer();
-            e.nativeEvent.srcElement.value = "";
+            (e.target as HTMLInputElement).value = "";
             return;
         }
         this.refreshTimeout = setTimeout(()=>{
-            let val = e.nativeEvent.srcElement.value;
+            let val = (e.target as HTMLInputElement).value;
             let res = val.match(this.patt);
             if(res != null){
-                let [start, end, cnt] = [res[1].toUpperCase(), res[2].toUpperCase(), res[3]];
-                if(cnt == undefined){
+                let [start, end, cnt] = [res[1].toUpperCase(), res[2].toUpperCase(), +res[3]];
+                if(cnt == undefined || cnt == NaN){
                     cnt = 1;
                 }
-                start = Math.floor(CARDSET.indexOf(start) / 2);
-                end = Math.floor(CARDSET.indexOf(end) / 2);
-                if(start > end){
-                    [start, end] = [end, start];
+                let startNum = Math.floor(CARDSET.indexOf(start) / 2);
+                let endNum = Math.floor(CARDSET.indexOf(end) / 2);
+                if(startNum > endNum){
+                    [startNum, endNum] = [endNum, startNum];
                 }
                 let selected = new Set();
                 let cur = 0;
-                for(;start <= end; start ++){
+                for(;startNum <= endNum; startNum ++){
                     cur = 0
                     for(let i = 0; i < this.state.cardsSetCnt * 2; i++){
-                        if(this.state.remainCards.has(this.state.cardsSetCnt * 2 * start + i)){
-                            selected.add(this.state.cardsSetCnt * 2 * start + i);
+                        if(this.state.remainCards.has(this.state.cardsSetCnt * 2 * startNum + i)){
+                            selected.add(this.state.cardsSetCnt * 2 * startNum + i);
                             cur += 1;
                             if(cur == cnt)break;
                         }
                     }
                     if(cur < cnt){
-                        //alert("剩余牌组不足以选取: " + CARDSET[start * 2]);
+                        alert("剩余牌组不足以选取: " + CARDSET[startNum * 2]);
                         return;
                     }
                 }
