@@ -148,11 +148,13 @@ export default class CardGame extends React.Component<{}, CardGameState, {}>{
     }
 
     changeCardSelect = (cardid:number) => {
-        if(this.state.selectedCards.has(cardid)){
-            this.state.selectedCards.delete(cardid);
+        let selectedCards = new Set<number>(this.state.selectedCards);
+        if(selectedCards.has(cardid)){
+            selectedCards.delete(cardid);
         }else if(this.state.remainCards.has(cardid)){
-            this.state.selectedCards.add(cardid);
+            selectedCards.add(cardid);
         }
+        return selectedCards;
     }
 
     handleCardMouseEvent = (e:React.MouseEvent) => {
@@ -163,9 +165,9 @@ export default class CardGame extends React.Component<{}, CardGameState, {}>{
                     let cardid = parseInt(target.getAttribute("data-cardid"))
                     if(cardid != NaN){
                         this.cardStart = cardid;
-                        let savedSelectedCards = new Set<number>(Array.from(this.state.selectedCards));
-                        this.changeCardSelect(cardid);
-                        this.setState({selectedCards:this.state.selectedCards, savedSelectedCards: savedSelectedCards});
+                        let savedSelectedCards = new Set<number>(this.state.selectedCards);
+                        let selectedCards = this.changeCardSelect(cardid);
+                        this.setState({selectedCards, savedSelectedCards});
                     }else{
                         this.cardStart = undefined;
                     }
@@ -181,7 +183,7 @@ export default class CardGame extends React.Component<{}, CardGameState, {}>{
                                 cardEnd = cardStart;
                                 cardStart = cardid;
                             }
-                            let selectedCards = new Set<number>(Array.from(this.state.savedSelectedCards))
+                            let selectedCards = new Set<number>(this.state.savedSelectedCards)
                             for(let i = cardStart; i <= cardEnd; i++){
                                 if(selectedCards.has(i)){
                                     selectedCards.delete(i);
@@ -189,7 +191,7 @@ export default class CardGame extends React.Component<{}, CardGameState, {}>{
                                     selectedCards.add(i);
                                 }
                             }
-                            this.setState({selectedCards:selectedCards})
+                            this.setState({selectedCards})
                         }else{
                             this.cardStart = undefined;
                         }
@@ -227,12 +229,12 @@ export default class CardGame extends React.Component<{}, CardGameState, {}>{
         let copyState:CardGameState = {
             cardsSetCnt: this.state.cardsSetCnt,
             curPlayer: this.state.curPlayer,
-            remainCards: new Set(Array.from(this.state.remainCards)),
-            leftCards: new Set(Array.from(this.state.leftCards)),
-            rightCards: new Set(Array.from(this.state.rightCards)),
-            topCards: new Set(Array.from(this.state.topCards)),
-            bottomCards: new Set(Array.from(this.state.bottomCards)),
-            selectedCards: new Set(Array.from(this.state.selectedCards)),
+            remainCards: new Set(this.state.remainCards),
+            leftCards: new Set(this.state.leftCards),
+            rightCards: new Set(this.state.rightCards),
+            topCards: new Set(this.state.topCards),
+            bottomCards: new Set(this.state.bottomCards),
+            selectedCards: new Set(this.state.selectedCards),
             savedSelectedCards: new Set()
         }
         this.usedStates.push(copyState as CardGameState);
