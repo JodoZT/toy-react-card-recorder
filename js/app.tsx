@@ -161,7 +161,7 @@ export default class CardGame extends React.Component<{}, CardGameState, {}>{
             case "mousedown":
                 if (target.classList.contains("card")) {
                     let cardid = parseInt(target.getAttribute("data-cardid"))
-                    if (cardid != NaN) {
+                    if (!isNaN(cardid)) {
                         this.cardStart = cardid;
                         let savedSelectedCards = new Set<number>(Array.from(this.state.selectedCards));
                         this.changeCardSelect(cardid);
@@ -175,7 +175,7 @@ export default class CardGame extends React.Component<{}, CardGameState, {}>{
                 if (this.cardStart != undefined) {
                     if (target.classList.contains("card")) {
                         let cardid = parseInt(target.getAttribute("data-cardid"))
-                        if (cardid != NaN) {
+                        if (!isNaN(cardid)) {
                             let cardEnd = cardid, cardStart = this.cardStart;
                             if (cardEnd < cardStart) {
                                 cardEnd = cardStart;
@@ -296,7 +296,7 @@ export default class CardGame extends React.Component<{}, CardGameState, {}>{
             let res = val.match(this.patt);
             if (res != null) {
                 let [start, end, cnt] = [res[1].toUpperCase(), res[2].toUpperCase(), +res[3]];
-                if (cnt == undefined || cnt == NaN) {
+                if (cnt == undefined || isNaN(cnt)) {
                     cnt = 1;
                 }
                 let startNum = Math.floor(CARDSET.indexOf(start) / 2);
