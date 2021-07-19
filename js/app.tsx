@@ -83,6 +83,7 @@ interface CardGameState {
     bottomCards: Set<number>;
     selectedCards: Set<number>;
     savedSelectedCards: Set<number>;
+    [index: number] : string;
 }
 
 export default class CardGame extends React.Component<{}, CardGameState, {}>{
@@ -163,7 +164,7 @@ export default class CardGame extends React.Component<{}, CardGameState, {}>{
                     let cardid = parseInt(target.getAttribute("data-cardid"))
                     if (!isNaN(cardid)) {
                         this.cardStart = cardid;
-                        let savedSelectedCards = new Set<number>(Array.from(this.state.selectedCards));
+                        let savedSelectedCards = new Set<number>(this.state.selectedCards);
                         this.changeCardSelect(cardid);
                         this.setState({ selectedCards: this.state.selectedCards, savedSelectedCards: savedSelectedCards });
                     } else {
@@ -181,7 +182,7 @@ export default class CardGame extends React.Component<{}, CardGameState, {}>{
                                 cardEnd = cardStart;
                                 cardStart = cardid;
                             }
-                            let selectedCards = new Set<number>(Array.from(this.state.savedSelectedCards))
+                            let selectedCards = new Set<number>(this.state.savedSelectedCards)
                             for (let i = cardStart; i <= cardEnd; i++) {
                                 if (selectedCards.has(i)) {
                                     selectedCards.delete(i);
@@ -227,12 +228,12 @@ export default class CardGame extends React.Component<{}, CardGameState, {}>{
         let copyState: CardGameState = {
             cardsSetCnt: this.state.cardsSetCnt,
             curPlayer: this.state.curPlayer,
-            remainCards: new Set(Array.from(this.state.remainCards)),
-            leftCards: new Set(Array.from(this.state.leftCards)),
-            rightCards: new Set(Array.from(this.state.rightCards)),
-            topCards: new Set(Array.from(this.state.topCards)),
-            bottomCards: new Set(Array.from(this.state.bottomCards)),
-            selectedCards: new Set(Array.from(this.state.selectedCards)),
+            remainCards: new Set(this.state.remainCards),
+            leftCards: new Set(this.state.leftCards),
+            rightCards: new Set(this.state.rightCards),
+            topCards: new Set(this.state.topCards),
+            bottomCards: new Set(this.state.bottomCards),
+            selectedCards: new Set(this.state.selectedCards),
             savedSelectedCards: new Set()
         }
         this.usedStates.push(copyState as CardGameState);
