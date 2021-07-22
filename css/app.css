@@ -10,20 +10,52 @@ div{
     font-size: 6px;
 }
 
-body{
-    background-image: linear-gradient(to right bottom,white,#BBBBBB);
-    min-width: 120rem;
+.theme-light{
+    --color-primary: #6495ed;
+    --color-secondary: #de2214;
+    --color-thirdly: yellow;
+    --color-base: white;
+    --color-base-opposite: black;
+    --color-highlight: #444444;
 }
 
-.container-header{
-    float: left;
-    font-size:2rem;
-    margin: 0 4rem;
+.theme-dark{
+    --color-primary: #6495ed;
+    --color-secondary: #de2214;
+    --color-thirdly: yellow;
+    --color-base: black;
+    --color-base-opposite: #888888;
+    --color-highlight: #AAAAAA;
+}
+
+body{
+    min-width: 120rem;
+    margin: 0;
+}
+
+.header-main{
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 4rem;
+    background: linear-gradient(0deg, var(--color-primary), black);
+}
+
+.logo{
+    font-size: 7rem;
+    color: var(--color-thirdly);
+    padding: 30rem 2rem 2rem 2rem;
+}
+
+.logo-comment{
+    font-size: 2.3rem;
+    font-family: consolas, sans-serif;
+    color: var(--color-base);
+    padding: 2rem;
 }
 
 .container-main{
     min-width: 120rem;
-    margin: 4rem auto 0 auto;
+    margin: 0 auto;
 }
 
 .game-main{
@@ -32,12 +64,12 @@ body{
 }
 
 .card{
-    background-color: white;
+    background-color: var(--color-base);
     width:1rem;
     height:3rem;
     border-radius: 6px;
     border-style: solid;
-    border-color: black;
+    border-color: var(--color-primary);
     border-width: 2px;
     padding:1rem 5rem 8rem 1rem;
     margin-right: -4rem;
@@ -48,35 +80,43 @@ body{
 
 .card-selected{
     background-color:#444444;
-    color:white;
+    color:var(--color-base);
+    margin-bottom: -4rem;
 }
 
 .card:hover{
-    background-color: #333333;
-    color:white;
+    background-color: var(--color-highlight);
+    color:var(--color-base);
 }
 
 .card:active{
-    background-color:black;
-    color:white;
+    background-color:var(--color-base-opposite);
+    color:var(--color-base);
 }
 
 .player{
     display: flex;
     flex-wrap: wrap;
     justify-content:center;
+    align-items: flex-end;
     border-style: solid;
-    border-color: #333333;
-    border-width:2px;
+    border-color: var(--color-primary);
+    border-width:0.4rem;
     border-radius:1rem;
     margin: auto;
     text-align: center;
-    background-color: #EEEEEE;
+    background-color:var(--color-base);
+    padding-right: 4rem;
+}
+
+.player-waiting{
+    border-color: var(--color-secondary);
 }
 
 .player-waiting .player-info{
-    background-color:#333333;
-    color:white;
+    background-color:var(--color-secondary);
+    color:var(--color-base);
+    margin-left: 4rem;
 }
 
 .player-top, .player-bottom{
@@ -111,7 +151,7 @@ body{
     width:100%;
     min-height: 15vh;
     margin: auto;
-    padding-bottom: 5rem;
+    padding-bottom: 3rem;
 }
 
 .player-counter .player{
@@ -132,7 +172,7 @@ body{
     text-align: center;
 }
 
-.span-btn{
+.div-btn{
     width: 100%;
     display: flex;
     justify-content: stretch;
@@ -143,7 +183,11 @@ body{
     flex:auto;
     width: 20rem;
     min-width: 14rem;
-    height: 4rem;
+    padding: 1rem;
+    cursor: pointer;
+    border:0.4rem solid var(--color-primary);
+    border-radius: 0.5rem;
+    text-align: center;
 }
 
 .btn-play{
@@ -151,16 +195,15 @@ body{
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
-    height: 6rem;
+    padding: 1rem;
     text-align: center;
     cursor: pointer;
-    color: green;
-    border-color: #333333;
+    color: var(--color-primary);
+    border-color: var(--color-primary);
     border-radius: 1rem;
-    border-width: 2px;
+    border-width: 0.4rem;
     border-style: solid;
-    background-color: #EEEEEE;
+    background-color: var(--color-base);
 }
 
 .container-btn-options{
@@ -231,7 +274,7 @@ body{
 }
 
 .panel-options{
-    background-color:rgb(255, 255, 255);
+    background-color:var(--color-base);
     position:absolute;
     left:0;
     right:0;
@@ -279,13 +322,14 @@ body{
     width:3rem;
     height:2px;
     border-style: solid;
-    border-color: black;
+    border-color: var(--color-base-opposite);
     border-radius:3px;
     border-width: 2px;
 }
 
 .option-item{
     font-size: 3rem;
+    color: var(--color-secondary);
 }
 
 .option-info{

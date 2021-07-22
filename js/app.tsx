@@ -1,4 +1,5 @@
-import * as React from "react"
+import * as React from "react";
+import * as Env from "./env";
 
 const CARDSET = ["3", "3", "4", "4", "5", "5", "6", "6", "7", "7", "8", "8", "9", "9", "10", "10", "J", "J", "Q", "Q", "K", "K", "A", "A", "2", "2", "小王", "大王"];
 
@@ -83,7 +84,7 @@ interface CardGameState {
     bottomCards: Set<number>;
     selectedCards: Set<number>;
     savedSelectedCards: Set<number>;
-    [index: number] : string;
+    [index: number]: string;
 }
 
 export default class CardGame extends React.Component<{}, CardGameState, {}>{
@@ -333,34 +334,41 @@ export default class CardGame extends React.Component<{}, CardGameState, {}>{
         if (!this.optionsVisible) {
             containerOptionsClassName += " invisible";
         }
-        return (<div className="game-main">
-            <div className="player-top"><Player cards={this.state.topCards} waitingPlayer={this.state.curPlayer % 4 == 0} key="top" playerInfo="玩家0" cardsSetCnt={this.state.cardsSetCnt}></Player></div>
-            <div className="player-mid">
-                <div className="player-left"><Player cards={this.state.leftCards} waitingPlayer={this.state.curPlayer % 4 == 3} key="left" playerInfo="玩家3" cardsSetCnt={this.state.cardsSetCnt}></Player></div>
-                <div className="player-right"><Player cards={this.state.rightCards} waitingPlayer={this.state.curPlayer % 4 == 1} key="right" playerInfo="玩家1" cardsSetCnt={this.state.cardsSetCnt}></Player></div>
-            </div>
-            <div className="player-bottom"><Player cards={this.state.bottomCards} waitingPlayer={this.state.curPlayer % 4 == 2} key="bottom" playerInfo="玩家2" cardsSetCnt={this.state.cardsSetCnt}></Player></div>
-            <br />
-            <div className="player-counter"><Player cards={this.state.remainCards} key="remain" playerInfo="记牌" selectedCards={this.state.selectedCards} mouseHandler={this.handleCardMouseEvent} cardsSetCnt={this.state.cardsSetCnt}></Player></div>
-            <div className="panel-quick-play">
-                <label htmlFor="quick-play">快速选牌: </label><input type="text" id="quick-play" name="quick-play" onKeyUp={(e) => this.handleQuickPlay(e)} placeholder="开始牌型 结束牌型 [数量]"></input>
-            </div>
-            <br></br>
-            <div className="container-btn-options">
-                <span className="span-btn"><button className="btn" onClick={() => this.toggleOptionsContainer(true)}>选项</button>
-                    <button className="btn" onClick={this.resetState}>重新开始</button>
-                    <button className="btn" onClick={this.recoverState}>撤销</button>
-                    <button className="btn" onClick={this.clearSelected}>取消选取</button></span>
-                <div className="btn-play" onClick={this.toNextPlayer}>出牌</div>
-            </div>
-            <div className={containerOptionsClassName}>
-                <div className="panel-options">
-                    <span className="btn-base to-top-right" onClick={() => this.toggleOptionsContainer(false)}><p className="icon-close to-mid"></p></span>
-                    <table><tbody>
-                        <OptionNumberItem optionName="牌组数量" optionAmount={this.state.cardsSetCnt} onModifyAmount={this.handleCardsSetCntModify}></OptionNumberItem>
-                    </tbody></table>
-                </div>
-            </div>
-        </div>);
+        return (
+            <Env.ThemeContext.Consumer>
+                {(theme) => {
+                    return (<div className={"game-main " + theme.themeClass}>
+                        <div className="player-top"><Player cards={this.state.topCards} waitingPlayer={this.state.curPlayer % 4 == 0} key="top" playerInfo="玩家0" cardsSetCnt={this.state.cardsSetCnt}></Player></div>
+                        <div className="player-mid">
+                            <div className="player-left"><Player cards={this.state.leftCards} waitingPlayer={this.state.curPlayer % 4 == 3} key="left" playerInfo="玩家3" cardsSetCnt={this.state.cardsSetCnt}></Player></div>
+                            <div className="player-right"><Player cards={this.state.rightCards} waitingPlayer={this.state.curPlayer % 4 == 1} key="right" playerInfo="玩家1" cardsSetCnt={this.state.cardsSetCnt}></Player></div>
+                        </div>
+                        <div className="player-bottom"><Player cards={this.state.bottomCards} waitingPlayer={this.state.curPlayer % 4 == 2} key="bottom" playerInfo="玩家2" cardsSetCnt={this.state.cardsSetCnt}></Player></div>
+                        <br />
+                        <div className="player-counter"><Player cards={this.state.remainCards} key="remain" playerInfo="记牌" selectedCards={this.state.selectedCards} mouseHandler={this.handleCardMouseEvent} cardsSetCnt={this.state.cardsSetCnt}></Player></div>
+                        <div className="panel-quick-play">
+                            <label htmlFor="quick-play">快速选牌: </label><input type="text" id="quick-play" name="quick-play" onKeyUp={(e) => this.handleQuickPlay(e)} placeholder="开始牌型 结束牌型 [数量]"></input>
+                        </div>
+                        <br></br>
+                        <div className="container-btn-options">
+                            <div className="div-btn"><span className="btn" onClick={() => this.toggleOptionsContainer(true)}>选项</span>
+                                <span className="btn" onClick={this.resetState}>重新开始</span>
+                                <span className="btn" onClick={this.recoverState}>撤销</span>
+                                <span className="btn" onClick={this.clearSelected}>取消选取</span></div>
+                            <div className="btn-play" onClick={this.toNextPlayer}>出牌</div>
+                        </div>
+                        <div className={containerOptionsClassName}>
+                            <div className="panel-options">
+                                <span className="btn-base to-top-right" onClick={() => this.toggleOptionsContainer(false)}><p className="icon-close to-mid"></p></span>
+                                <table><tbody>
+                                    <OptionNumberItem optionName="牌组数量" optionAmount={this.state.cardsSetCnt} onModifyAmount={this.handleCardsSetCntModify}></OptionNumberItem>
+                                </tbody></table>
+                            </div>
+                        </div>
+                    </div>)
+                }}
+
+            </Env.ThemeContext.Consumer>
+        );
     }
 }
