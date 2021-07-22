@@ -230,7 +230,7 @@ body{
 
 .icon-loading{
     flex:none;
-    background-image: url(/static/loading.svg);
+    background-image: url(../static/loading.svg);
     background-size: 6rem 6rem;
     width: 6rem;
     height: 6rem;
