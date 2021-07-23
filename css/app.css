@@ -72,8 +72,7 @@ body{
     border-color: var(--color-primary);
     border-width: 2px;
     padding:1rem 5rem 8rem 1rem;
-    margin-right: -4rem;
-    margin-bottom: -6rem;
+    margin:2rem -4rem -6rem 0;
     user-select: none;
     flex:0 0 auto;
 }
@@ -81,7 +80,7 @@ body{
 .card-selected{
     background-color:#444444;
     color:var(--color-base);
-    margin-bottom: -4rem;
+    margin-top: 0;
 }
 
 .card:hover{
@@ -98,7 +97,7 @@ body{
     display: flex;
     flex-wrap: wrap;
     justify-content:center;
-    align-items: flex-end;
+    align-items: flex-start;
     border-style: solid;
     border-color: var(--color-primary);
     border-width:0.4rem;
