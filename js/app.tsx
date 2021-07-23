@@ -207,15 +207,15 @@ export default class CardGame extends React.Component<{}, CardGameState, {}>{
                         } else {
                             this.cardStart = undefined;
                         }
+                    }else{
+                        this.setState({selectedCards:this.state.savedSelectedCards});
                     }
                 }
                 break;
             case "mouseup":
                 if (this.cardStart != undefined) {
-                    if (target.classList.contains("card")) {
                         this.cardStart = undefined;
                         this.setState({ savedSelectedCards: undefined })
-                    }
                 }
                 break;
             case "mouseleave":

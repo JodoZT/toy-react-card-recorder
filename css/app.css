@@ -37,6 +37,7 @@ body{
 
 .header-main{
     display: flex;
+    justify-content: space-around;
     align-items: flex-end;
     margin-bottom: 4rem;
     background: linear-gradient(0deg, var(--color-primary), black);
@@ -151,7 +152,7 @@ body{
 }
 
 .player-waiting .card{
-    transform: rotate(30deg);
+    transform: rotate(20deg);
 }
 
 .player-top, .player-bottom{
@@ -257,9 +258,13 @@ body{
     transform: scale(1.1);
 }
 
-.btn:active, .btn-play:active{
+.btn:active{
     transform: scale(1.05);
     background-color: var(--color-primary);
+}
+
+.btn-play:active{
+    transform: scale(1.05);
 }
 
 .container-btn-options{
