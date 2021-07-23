@@ -12,6 +12,7 @@ div{
 
 .theme-light{
     --color-primary: #6495ed;
+    --color-primary-light: #8ec3ec;
     --color-secondary: #de2214;
     --color-thirdly: yellow;
     --color-base: white;
@@ -21,6 +22,7 @@ div{
 
 .theme-dark{
     --color-primary: #6495ed;
+    --color-primary-light: #8ec3ec;
     --color-secondary: #de2214;
     --color-thirdly: yellow;
     --color-base: black;
@@ -40,10 +42,37 @@ body{
     background: linear-gradient(0deg, var(--color-primary), black);
 }
 
-.logo{
+.logo-span{
     font-size: 7rem;
-    color: var(--color-thirdly);
+    color: var(--color-base);
     padding: 30rem 2rem 2rem 2rem;
+}
+
+.logo{
+    font-size: 3rem;
+    font-family: serif;
+}
+
+.logocard{
+    padding: 1rem 1rem 2rem 1rem;
+    border: 2px solid white;
+    border-radius: 3px;
+    float: left;
+}
+
+.logocard1{
+    transform: rotate(-30deg);
+    background: var(--color-base-opposite);
+}
+
+.logocard2{
+    transform: rotate(0deg) translate(-1rem, -1.5rem);
+    background: var(--color-secondary);
+}
+
+.logocard3{
+    transform: rotate(30deg) translate(-2rem);
+    background: var( --color-primary);
 }
 
 .logo-comment{
@@ -79,18 +108,19 @@ body{
 }
 
 .card-selected{
-    background-color:#444444;
+    background-color:var(--color-primary);
     color:var(--color-base);
     margin-top: 0;
+    border-color: var(--color-base);
 }
 
 .card:hover{
-    background-color: var(--color-highlight);
+    background-color: var(--color-primary-light);
     color:var(--color-base);
 }
 
 .card:active{
-    background-color:var(--color-base-opposite);
+    background-color:var(--color-primary);
     color:var(--color-base);
 }
 
@@ -117,6 +147,7 @@ body{
     background-color:var(--color-secondary);
     color:var(--color-base);
     margin-left: 4rem;
+    padding-right: 4rem;
 }
 
 .player-waiting .card{
@@ -127,8 +158,9 @@ body{
     width:100%;
     max-width: 60rem;
     min-height: 15vh;
-    margin: auto;
+    margin: 1rem auto;
     padding-bottom: 6rem;
+    clear: both;
 }
 
 .player-mid{
@@ -141,6 +173,7 @@ body{
     width:45%;
     min-width: 50rem;
     min-height: 15vh;
+    margin: 1rem auto;
 }
 
 .player-left{
@@ -189,11 +222,12 @@ body{
     min-width: 14rem;
     padding: 1rem;
     cursor: pointer;
-    border:0.4rem solid var(--color-primary);
     border-radius: 0.5rem;
     text-align: center;
-    background: var(--color-base);
+    background: var(--color-primary);
     transition: transform .3s;
+    color:var(--color-base);
+    margin: .5rem;
 }
 
 .btn-play{
@@ -211,10 +245,21 @@ body{
     border-style: solid;
     background-color: var(--color-base);
     transition: transform .3s;
+    margin:.5rem;
 }
 
-.btn:hover, .btn-play:hover{
+.btn:hover{
     transform: scale(1.1);
+    background-color: var(--color-primary-light);
+}
+
+.btn-play:hover{
+    transform: scale(1.1);
+}
+
+.btn:active, .btn-play:active{
+    transform: scale(1.05);
+    background-color: var(--color-primary);
 }
 
 .container-btn-options{
@@ -224,6 +269,11 @@ body{
 
 .invisible{
     display: none !important;
+}
+
+.card-init{
+    opacity: 0;
+    transform: translateY(8rem);
 }
 
 .container-loading-box{

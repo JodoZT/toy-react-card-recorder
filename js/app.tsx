@@ -10,9 +10,21 @@ interface CardProps {
     cardsSetCnt: number;
 }
 
-class Card extends React.Component<CardProps, {}, {}>{
+interface CardState{
+    show : boolean;
+}
+
+class Card extends React.Component<CardProps, CardState, {}>{
+    state = {
+        show : false
+    }
+    
+    componentDidMount(){
+        setTimeout(()=>{this.setState({show:true})}, 0) ;
+    }
+    
     render() {
-        let className = "card";
+        let className = "card" + (this.state.show ? "":" card-init");
         if (this.props.selectedCards && this.props.selectedCards.has(this.props.cardid)) {
             className += " card-selected";
         }
@@ -36,7 +48,7 @@ class Player extends React.Component<PlayerProps, {}, {}>{
             className += " player-waiting";
         }
         if (this.props.cards.size == 0) {
-            return <div className={className}>暂无出牌<div className="player-info">{this.props.playerInfo}</div></div>;
+            return <div className={className}>无牌<div className="player-info">{this.props.playerInfo}</div></div>;
         }
         let cardsDoms = []
         for (let card of Array.from(this.props.cards).sort((a, b) => a - b)) {
